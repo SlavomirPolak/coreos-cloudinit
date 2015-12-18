@@ -20,27 +20,27 @@ func NewDatasource(root string) *opennebulaDrive {
 	return &opennebulaDrive{root, ioutil.ReadFile}
 }
 
-func (cd *opennebulaDrive) IsAvailable() bool {
-	_, err := os.Stat(cd.root)
+func (ond *opennebulaDrive) IsAvailable() bool {
+	_, err := os.Stat(ond.root)
 	return !os.IsNotExist(err)
 }
 
-func (cd *opennebulaDrive) AvailabilityChanges() bool {
+func (ond *opennebulaDrive) AvailabilityChanges() bool {
 	return true
 }
 
-func (cd *opennebulaDrive) ConfigRoot() string {
-	return cd.root
+func (ond *opennebulaDrive) ConfigRoot() string {
+	return ond.root
 }
 
-func (cd *opennebulaDrive) FetchMetadata() (metadata datasource.Metadata, err error) {
-	log.Printf("Attempting to read SSH_KEY from " + cd.root + "context.sh")
+func (ond *opennebulaDrive) FetchMetadata() (metadata datasource.Metadata, err error) {
+	log.Printf("Attempting to read SSH_KEY from " + ond.root + "context.sh")
 	// searching for SSH_PUBLIC_KEY or SSH_KEY or PUBLIC_SSH_KEY
-	val, err := fetchVariableFromShellScript(cd.root + "context.sh", "SSH_PUBLIC_KEY")
+	val, err := fetchVariableFromShellScript(ond.root + "context.sh", "SSH_PUBLIC_KEY")
 	if val == "" {
-		val, err = fetchVariableFromShellScript(cd.root + "context.sh", "SSH_KEY")
+		val, err = fetchVariableFromShellScript(ond.root + "context.sh", "SSH_KEY")
 		if val == "" {
-			val, err = fetchVariableFromShellScript(cd.root + "context.sh", "PUBLIC_SSH_KEY")
+			val, err = fetchVariableFromShellScript(ond.root + "context.sh", "PUBLIC_SSH_KEY")
 		}
 	}
 	if err != nil {
@@ -55,18 +55,18 @@ func (cd *opennebulaDrive) FetchMetadata() (metadata datasource.Metadata, err er
 	return 
 }
 
-func (cd *opennebulaDrive) FetchUserdata() ([]byte, error) {
-	log.Printf("Attempting to read USER_DATA from " + cd.root + "context.sh")
-	ret, err := fetchVariableFromShellScript(cd.root + "context.sh", "USER_DATA")
+func (ond *opennebulaDrive) FetchUserdata() ([]byte, error) {
+	log.Printf("Attempting to read USER_DATA from " + ond.root + "context.sh")
+	ret, err := fetchVariableFromShellScript(ond.root + "context.sh", "USER_DATA")
 	return []byte(ret), err
 }
 
-func (cd *opennebulaDrive) Type() string {
+func (ond *opennebulaDrive) Type() string {
 	return "opennebula-drive"
 }
 
-func fetchVariableFromShellScript(fileName string, variableName string) (string, error) {
-	variablesMap, err := bashParser.UseShlex(fileName)
+func fetchVariableFromShellScript(filePath string, variableName string) (string, error) {
+	variablesMap, err := bashParser.UseShlex(filePath)
 	if err != nil {
 		return "", err
 	}
