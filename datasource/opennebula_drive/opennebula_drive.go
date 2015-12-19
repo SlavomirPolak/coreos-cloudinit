@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	b64 "encoding/base64"
 	
-	"github.com/SlavomirPolak/bashParser/src/bashParser"
+	"github.com/SlavomirPolak/bashParser/src"
 	"github.com/coreos/coreos-cloudinit/datasource"
 )
 
